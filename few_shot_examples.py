@@ -21,9 +21,9 @@ class FewShotExampleInput(BaseModel):
     question: str = Field()
 
 
-def few_shot_examples_func(question: str) -> str:
+def few_shot_examples_func(string):
     """Get few-shot examples from the pool of samples."""
-    return query_embeddings(question)
+    return query_embeddings(string)
 
 
 class FewShotExamplesTool(BaseTool):

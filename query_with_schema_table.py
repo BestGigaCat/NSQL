@@ -17,7 +17,6 @@ db = SQLDatabase.from_uri("sqlite:///Chinook.db")
 # Set up LLM
 llm = Ollama(
     model="llama2",
-    verbose=True,
     callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]),
 )
 
@@ -28,7 +27,7 @@ prompt_template = ("You are an SQL expert. Please generate SQL for {question}, \
 prompt = PromptTemplate(
     input_variables=["question"], template=prompt_template
 )
-llm_chain = LLMChain(llm=llm, prompt=prompt, verbose=True)
+llm_chain = LLMChain(llm=llm, prompt=prompt)
 agent = ZeroShotAgent(llm_chain=llm_chain)
 
 # Replace tool here for different testings
