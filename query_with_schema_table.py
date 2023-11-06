@@ -10,7 +10,7 @@ from langchain.llms import Ollama
 from langchain.prompts import PromptTemplate
 from langchain.utilities import SQLDatabase
 
-from few_shot_examples import FewShotExamplesTool
+from table_schema_tool import TableSchemaTool
 
 db = SQLDatabase.from_uri("sqlite:///Chinook.db")
 
@@ -22,15 +22,17 @@ llm = Ollama(
 )
 
 prompt_template = ("You are an SQL expert. Please generate SQL for {question}, \n"
-                   "1. use few_shot_examples_tool to get examples first\n"
-                   "2. then tell me what similar SQL you get\n"
+                   "1. use table_schema_tool to get a table to consider answering this question\n"
+                   "2. then tell me what table you decide to use\n"
                    "3. Then tell me the SQL query you generate for this {question}\n")
 prompt = PromptTemplate(
     input_variables=["question"], template=prompt_template
 )
 llm_chain = LLMChain(llm=llm, prompt=prompt, verbose=True)
 agent = ZeroShotAgent(llm_chain=llm_chain)
-tools = [FewShotExamplesTool()]
+
+# Replace tool here for different testings
+tools = [TableSchemaTool()]
 executor = AgentExecutor.from_agent_and_tools(agent=agent, tools=tools)
 
 print("ask")

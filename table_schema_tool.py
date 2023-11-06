@@ -7,35 +7,28 @@ from langchain.callbacks.manager import (
 from langchain.tools import BaseTool
 from pydantic import Field, BaseModel
 
-from utils import query_embeddings
+# from utils import query_embeddings
 
-# TODO: This is a modified version from the original few_shot_examples.py
-FEW_SHOT_EXAMPLE_DESCRIPTION = """
+TABLE_SCHEMA_TOOL_DESCRIPTION = """
     Input: question to find examples answers for.
-    Output: One similar question's response.
-    Use this tool to fetch previously asked Question/SQL pairs as examples for improving SQL query generation.
+    Output: One table and column name separated by ->. Example output: table1 -> column2
     """  # noqa: E501
 
 
-class FewShotExampleInput(BaseModel):
+class TableSchemaInput(BaseModel):
     question: str = Field()
 
 
-def few_shot_examples_func(question: str) -> str:
-    """Get few-shot examples from the pool of samples."""
-    return query_embeddings(question)
-
-
-class FewShotExamplesTool(BaseTool):
-    name = "few_shot_examples_tool"
-    description = FEW_SHOT_EXAMPLE_DESCRIPTION
-    args_schema: Type[BaseModel] = FewShotExampleInput
+class TableSchemaTool(BaseTool):
+    name = "table_schema_tool"
+    description = TABLE_SCHEMA_TOOL_DESCRIPTION
+    args_schema: Type[BaseModel] = TableSchemaInput
 
     def _run(
             self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
     ) -> str:
         """Use the tool."""
-        return few_shot_examples_func(query)
+        return "Employee -> *"
 
     async def _arun(
             self, query: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
