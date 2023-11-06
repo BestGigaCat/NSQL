@@ -1,7 +1,5 @@
-import chromadb
-
 # from chromadb.config import Settings
-# import OllamaEmbeddings
+import chromadb
 from langchain.embeddings import OllamaEmbeddings
 
 # from langchain.vectorstores import Chroma
@@ -12,6 +10,8 @@ persistent_client = chromadb.PersistentClient("./chroma_db")
 # collection = client.create_collection("lilianblog")
 collection = persistent_client.get_or_create_collection(name="playground2")
 print(persistent_client.list_collections())
+
+collection.delete(ids=["1"])
 
 # Set up embedding
 embed = OllamaEmbeddings(base_url="http://localhost:11434", model="llama2")
