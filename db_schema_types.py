@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, field_validator
 
 
 class ForeignKeyDetail(BaseModel):
@@ -41,8 +41,3 @@ class TableDescription(BaseModel):
     status: str = TableDescriptionStatus.SYNCHRONIZED.value
     error_message: str | None
 
-    @validator("last_schema_sync", pre=True)
-    def parse_datetime_with_timezone(cls, value):
-        if not value:
-            return None
-        return value.replace(tzinfo=timezone.utc)  # Set the timezone to UTC

@@ -9,7 +9,7 @@ from langchain.chains import LLMChain
 from langchain.llms import Ollama
 from langchain.prompts import PromptTemplate
 from langchain.utilities import SQLDatabase
-
+from langchain.llms import TextGen
 from table_schema_tool import TableSchemaTool
 
 db = SQLDatabase.from_uri("sqlite:///Chinook.db")
