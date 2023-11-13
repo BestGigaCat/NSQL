@@ -9,7 +9,8 @@ from llama_index import (
     SQLDatabase,
     SQLStructStoreIndex, VectorStoreIndex,
 )
-from llama_index.indices.struct_store import SQLContextContainerBuilder, SQLTableRetrieverQueryEngine
+from llama_index.indices.struct_store import SQLContextContainerBuilder, SQLTableRetrieverQueryEngine, \
+    NLSQLTableQueryEngine
 from llama_index.llms import Ollama
 from llama_index.objects import SQLTableNodeMapping, SQLTableSchema, ObjectIndex
 
@@ -28,9 +29,9 @@ from sqlalchemy import insert
 # Define custom LLM
 # https://gpt-index.readthedocs.io/en/v0.6.6/how_to/customization/custom_llms.html
 # Set up LLM
-llm = Ollama(model="llama2")
+llm = Ollama(model="llama2", temperature=0.1)
 llm_predictor = LLMPredictor(llm)
-embed_model = OllamaEmbeddings(base_url="http://localhost:11434", model="llama2")
+embed_model = OllamaEmbeddings(model="llama2")
 '''
 Define service integrated context, if not specified will use default settings:
     - llm_predictor: BaseLLMPredictor
@@ -68,12 +69,14 @@ rows = [
 ]
 for row in rows:
     stmt = insert(city_stats_table).values(**row)
-    with engine.connect() as connection:
+    with engine.begin() as connection:
         cursor = connection.execute(stmt)
 
 # view current table
 stmt = select(
-    city_stats_table.c["city_name", "population", "country"]
+    city_stats_table.c.city_name,
+    city_stats_table.c.population,
+    city_stats_table.c.country,
 ).select_from(city_stats_table)
 
 with engine.connect() as connection:
@@ -91,3 +94,10 @@ index = SQLStructStoreIndex(
     service_context=service_context
 )
 
+query_engine = NLSQLTableQueryEngine(
+    sql_database=sql_database,
+    tables=["city_stats"],
+service_context=service_context
+)
+query_str = "Which city has the highest population?"
+response = query_engine.query(query_str)
