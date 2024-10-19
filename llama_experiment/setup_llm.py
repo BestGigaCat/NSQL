@@ -87,17 +87,19 @@ sql_database = SQLDatabase(engine, include_tables=["city_stats"])
 # If the db is already populated with data, we can instantiate the SQL index with a blank documents list Note: this
 # index only covers one table, for many table index, check out:
 # https://gpt-index.readthedocs.io/en/v0.6.27/examples/index_structs/struct_indices/SQLIndexDemo-ManyTables.html
-index = SQLStructStoreIndex(
-    [],
-    sql_database=sql_database,
-    table_name="city_stats",
-    service_context=service_context
-)
+# index = SQLStructStoreIndex(
+#    [],
+#    sql_database=sql_database,
+#    table_name="city_stats",
+#    service_context=service_context
+#)
 
 query_engine = NLSQLTableQueryEngine(
     sql_database=sql_database,
     tables=["city_stats"],
-service_context=service_context
+    service_context=service_context
 )
 query_str = "Which city has the highest population?"
 response = query_engine.query(query_str)
+print(response)
+
